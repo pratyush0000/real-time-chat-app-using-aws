@@ -1,0 +1,10 @@
+type Message 
+  @model 
+  @auth(rules: [
+    { allow: private, operations: [create, read, update, delete] }
+  ]) {
+  id: ID!
+  content: String!
+  sender: String!
+  createdAt: AWSDateTime!
+}
