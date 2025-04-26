@@ -3,15 +3,24 @@ import { withAuthenticator } from '@aws-amplify/ui-react';
 import { Amplify } from 'aws-amplify';
 import { generateClient } from 'aws-amplify/api';
 import { graphqlOperation } from '@aws-amplify/api-graphql';
-import { createMessage } from './graphql/mutations';
 import { listMessages } from './graphql/queries';
 import { onCreateMessage } from './graphql/subscriptions';
 import { fetchAuthSession, signOut } from 'aws-amplify/auth';
 import awsconfig from './aws-exports';
 
-// Configure Amplify
 Amplify.configure(awsconfig);
 const client = generateClient();
+
+const safeCreateMessage = /* GraphQL */ `
+  mutation SafeCreateMessage($input: CreateMessageInput!) {
+    safeCreateMessage(input: $input) {
+      id
+      content
+      sender
+      createdAt
+    }
+  }
+`;
 
 function App() {
   const [messages, setMessages] = useState([]);
@@ -47,7 +56,6 @@ function App() {
         authMode: 'userPool'
       });
       const items = result.data?.listMessages?.items || [];
-      // Sort by createdAt
       const sorted = items.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
       setMessages(sorted);
     } catch (err) {
@@ -58,53 +66,53 @@ function App() {
 
   const sendMessage = async () => {
     if (!message.trim() || !username) return;
-
+  
     try {
       const input = {
         content: message,
         sender: username,
         createdAt: new Date().toISOString()
       };
-
-      const result = await client.graphql({
-        query: createMessage,
-        variables: { input },
-        authMode: 'userPool'
-      });
-
+  
+      const result = await client.graphql(
+        graphqlOperation(safeCreateMessage, { input })
+      );
+  
+      console.log("Message sent successfully:", result);
+  
       setMessage('');
+      await fetchMessages(); // 🔥 manually reload message list
     } catch (err) {
-      console.error("Error sending message:", JSON.stringify(err, null, 2));
-      setError("Failed to send message.");
+      console.error("Error sending message:", err);
+      setError(err?.message || "Failed to send message.");
     }
   };
+  
+  
+  
 
   useEffect(() => {
     if (!username) return;
-
+  
     fetchMessages();
-
+  
     const subscription = client.graphql({
       query: onCreateMessage,
       authMode: 'userPool'
     }).subscribe({
-      next: ({ data }) => {
-        const newMessage = data?.onCreateMessage;
-        if (!newMessage) return;
-
-        setMessages(prev => {
-          const exists = prev.find(msg => msg.id === newMessage.id);
-          return exists ? prev : [...prev, newMessage];
-        });
+      next: async () => {
+        await fetchMessages(); // 🔥 reload message list for everyone
       },
       error: (err) => {
         console.error("Subscription error:", JSON.stringify(err, null, 2));
         setError("Real-time updates failed.");
       }
     });
-
+  
     return () => subscription.unsubscribe();
   }, [username]);
+  
+  
 
   const handleKeyPress = (e) => {
     if (e.key === 'Enter') {

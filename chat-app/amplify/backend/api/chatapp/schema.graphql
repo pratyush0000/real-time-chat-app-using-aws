@@ -1,10 +1,24 @@
 type Message 
-  @model 
-  @auth(rules: [
-    { allow: private, operations: [create, read, update, delete] }
-  ]) {
+  @model(subscriptions: null)
+  @auth(rules: [{ allow: private, operations: [create, read, update, delete] }]) {
   id: ID!
   content: String!
   sender: String!
   createdAt: AWSDateTime!
+}
+
+input CreateMessageInput {
+  content: String!
+  sender: String!
+  createdAt: AWSDateTime!
+}
+
+type Mutation {
+  safeCreateMessage(input: CreateMessageInput!): Message
+    @function(name: "filterBadWords-${env}")
+}
+
+type Subscription {
+  onCreateMessage: Message
+    @aws_subscribe(mutations: ["createMessage", "safeCreateMessage"])
 }

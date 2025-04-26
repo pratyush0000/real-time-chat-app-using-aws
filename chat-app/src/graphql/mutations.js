@@ -1,6 +1,18 @@
 /* eslint-disable */
 // this is an auto generated file. This will be overwritten
 
+export const safeCreateMessage = /* GraphQL */ `
+  mutation SafeCreateMessage($input: CreateMessageInput!) {
+    safeCreateMessage(input: $input) {
+      id
+      content
+      sender
+      createdAt
+      updatedAt
+      __typename
+    }
+  }
+`;
 export const createMessage = /* GraphQL */ `
   mutation CreateMessage(
     $input: CreateMessageInput!

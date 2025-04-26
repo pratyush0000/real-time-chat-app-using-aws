@@ -59,5 +59,39 @@
       "providerPlugin": "awscloudformation",
       "service": "Cognito"
     }
+  },
+  "function": {
+    "filterBadWords": {
+      "build": true,
+      "dependsOn": [],
+      "providerPlugin": "awscloudformation",
+      "service": "Lambda"
+    }
+  },
+  "parameters": {
+    "AMPLIFY_function_filterBadWords_deploymentBucketName": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "filterBadWords"
+        }
+      ]
+    },
+    "AMPLIFY_function_filterBadWords_s3Key": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "filterBadWords"
+        }
+      ]
+    },
+    "AMPLIFY_function_filterBadWords_tableName": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "filterBadWords"
+        }
+      ]
+    }
   }
 }

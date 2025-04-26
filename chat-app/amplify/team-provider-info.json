@@ -17,6 +17,13 @@
       },
       "api": {
         "chatapp": {}
+      },
+      "function": {
+        "filterBadWords": {
+          "deploymentBucketName": "amplify-chatapp-dev-620a7-deployment",
+          "s3Key": "amplify-builds/filterBadWords-41676d554c4c4637414f-build.zip",
+          "tableName": "Message-o4xsidozyzcbfiyjjxb6e76jjm-dev"
+        }
       }
     }
   }
