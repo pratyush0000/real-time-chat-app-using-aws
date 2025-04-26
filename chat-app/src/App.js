@@ -133,7 +133,7 @@ function App() {
   return (
     <div style={{ maxWidth: '800px', margin: '0 auto', padding: '20px' }}>
       <header style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '20px' }}>
-        <h1>Real-Time Chat</h1>
+        <h1>chat🔥</h1>
         <div>
           <strong>{username}</strong>
           <button onClick={handleSignOut} style={{ marginLeft: '15px' }}>Sign Out</button>
