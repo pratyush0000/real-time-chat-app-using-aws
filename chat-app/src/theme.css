@@ -37,6 +37,12 @@
   --shadow-panel: 0 20px 60px rgba(20, 30, 60, 0.12);
 }
 
+html,
+body {
+  margin: 0;
+  padding: 0;
+}
+
 body {
   background: var(--color-bg);
   color: var(--color-text);
